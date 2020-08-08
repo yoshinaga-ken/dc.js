@@ -22,6 +22,7 @@ export class Legend {
         this._itemHeight = 12;
         this._gap = 5;
         this._horizontal = false;
+        this._hiddenVisibility = true;
         this._legendWidth = 560;
         this._itemWidth = 70;
         this._autoItemWidth = false;
@@ -118,6 +119,20 @@ export class Legend {
         this._horizontal = horizontal;
         return this;
     }
+
+    /**
+     * Hidden stack Legend visibility settings
+     * @param  {Boolean} [hiddenVisibility=true]
+     * @returns {Boolean|Legend}
+     */
+    hiddenVisibility(hiddenVisibility) {
+        if (!arguments.length) {
+            return this._hiddenVisibility;
+        }
+        this._hiddenVisibility = hiddenVisibility;
+        return this;
+    }
+
 
     /**
      * Maximum width for horizontal legend.
@@ -272,20 +287,26 @@ export class Legend {
 
         {
             const self = this;
+            const LEGEND_HIDE_Y = -100;
+            const legendItemHeight = self._legendItemHeight();
+            let n = 0;
 
             itemEnter.attr('transform', function (d, i) {
+                let translateBy;
+                let hidden = d.hidden && !self._hiddenVisibility;
                 if (self._horizontal) {
                     const itemWidth = self._autoItemWidth === true ? this.getBBox().width + self._gap : self._itemWidth;
                     if ((cumulativeLegendTextWidth + itemWidth) > self._legendWidth && cumulativeLegendTextWidth > 0) {
                         ++row;
                         cumulativeLegendTextWidth = 0;
                     }
-                    const translateBy = `translate(${cumulativeLegendTextWidth},${row * self._legendItemHeight()})`;
-                    cumulativeLegendTextWidth += itemWidth;
-                    return translateBy;
+                    translateBy = `translate(${cumulativeLegendTextWidth},${hidden ? LEGEND_HIDE_Y : row * legendItemHeight})`;
+                    cumulativeLegendTextWidth += hidden ? 0 : itemWidth;
                 } else {
-                    return `translate(0,${i * self._legendItemHeight()})`;
+                    translateBy = `translate(0,${hidden ? LEGEND_HIDE_Y : n * legendItemHeight})`;
                 }
+                n += hidden ? 0 : 1;
+                return translateBy;
             });
         }
     }
