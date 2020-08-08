@@ -384,14 +384,26 @@ module.exports = function (grunt) {
             hierarchy: {
                 command: 'dot -Tsvg -o <%= conf.websrc %>/img/class-hierarchy.svg class-hierarchy.dot'
             },
+            clean: {
+                command: 'rm -rf dist/'
+            },
             rollup: {
-                command: 'rm -rf dist/; rollup --config'
+                command: 'rollup --config'
             },
             eslint: {
                 command: `eslint ${lintableFiles}`
             },
             'eslint-fix': {
                 command: `eslint ${lintableFiles} --fix`
+            },
+            tslint: {
+                command: 'tslint src/**/*.ts'
+            },
+            'tslint-fix': {
+                command: 'tslint src/**/*.ts --fix'
+            },
+            tsc: {
+                command: 'tsc'
             }
         }
     });
@@ -426,7 +438,9 @@ module.exports = function (grunt) {
     });
 
     // task aliases
-    grunt.registerTask('build', ['shell:rollup', 'sass', 'cssmin']);
+    //grunt.registerTask('build', ['shell:clean', 'shell:tsc', 'shell:rollup', 'sass', 'cssmin']);
+    grunt.registerTask('build', ['shell:clean', 'shell:rollup', 'sass', 'cssmin']);
+
     grunt.registerTask('docs', ['build', 'copy', 'jsdoc', 'jsdoc2md', 'docco', 'fileindex']);
     grunt.registerTask('web', ['docs', 'gh-pages']);
     grunt.registerTask('server-only', ['docs', 'fileindex', 'jasmine:specs:build', 'connect:server']);
@@ -437,8 +451,9 @@ module.exports = function (grunt) {
     grunt.registerTask('coverage', ['build', 'copy', 'karma:coverage']);
     grunt.registerTask('ci', ['ci-pull', 'safe-sauce-labs']);
     grunt.registerTask('ci-pull', ['build', 'copy', 'karma:ci']);
-    grunt.registerTask('lint', ['shell:eslint']);
-    grunt.registerTask('lint-fix', ['shell:eslint-fix']);
+
+    //grunt.registerTask('lint', ['shell:tslint', 'shell:eslint']);
+    //grunt.registerTask('lint-fix', ['shell:tslint-fix', 'shell:eslint-fix']);
     grunt.registerTask('default', ['build', 'shell:hooks']);
     grunt.registerTask('doc-debug', ['build', 'jsdoc', 'jsdoc2md', 'watch:jsdoc2md']);
 };
