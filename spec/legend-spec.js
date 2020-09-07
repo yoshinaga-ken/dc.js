@@ -94,6 +94,47 @@ describe('dc.legend', () => {
             });
         });
 
+/*
+//TODO:hiddenVisibility(false)のテストコード
+
+        describe('with .horizontal(true) and hiddenVisibility(false)', () => {
+            beforeEach(() => {
+                chart.legend(new dc.Legend().horizontal(true).hiddenVisibility(false));
+                chart.hideStack(chart.stack()[0].name);
+                chart.render();
+                debugger;
+            });
+
+            it('should place legend items visibility and vertically', () => {
+                legendItem(0).attr('visibility')==='visible'
+                legendItem(1).attr('visibility')==='hidden';
+                legendItem(2).attr('visibility')==='hidden';
+
+                expect(coordsFromTranslate(legendItem(0).attr('transform')).x).toBeWithinDelta(0, 1);
+                expect(coordsFromTranslate(legendItem(1).attr('transform')).x).toBeWithinDelta(65, 5);
+                expect(coordsFromTranslate(legendItem(2).attr('transform')).x).toBeWithinDelta(155, 15);
+            });
+        });
+
+        describe('without .horizontal(true) and hiddenVisibility(false)', () => {
+            beforeEach(() => {
+                chart.legend(new dc.Legend().horizontal(false).hiddenVisibility(false));
+                chart.hideStack(chart.stack()[0].name);
+                chart.render();
+                debugger;
+            });
+
+            it('should place legend items visibility and horizontally', () => {
+                legendItem(0).attr('visibility')==='visible'
+                legendItem(1).attr('visibility')==='hidden';
+                legendItem(2).attr('visibility')==='hidden';
+                expect(coordsFromTranslate(legendItem(0).attr('transform')).y).toBeWithinDelta(0, 1);
+                expect(coordsFromTranslate(legendItem(1).attr('transform')).y).toBeWithinDelta(65, 5);
+                expect(coordsFromTranslate(legendItem(2).attr('transform')).y).toBeWithinDelta(155, 15);
+            });
+
+        });
+*/
         describe('with .horizontal(true) and defined legendWidth and itemWidth', () => {
             let legendCoords;
             beforeEach(() => {
