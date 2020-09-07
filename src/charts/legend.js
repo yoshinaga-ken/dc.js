@@ -287,27 +287,28 @@ export class Legend {
 
         {
             const self = this;
-            const LEGEND_HIDE_Y = -100;
             const legendItemHeight = self._legendItemHeight();
             let n = 0;
 
-            itemEnter.attr('transform', function (d, i) {
-                let translateBy;
-                let hidden = d.hidden && !self._hiddenVisibility;
-                if (self._horizontal) {
-                    const itemWidth = self._autoItemWidth === true ? this.getBBox().width + self._gap : self._itemWidth;
-                    if ((cumulativeLegendTextWidth + itemWidth) > self._legendWidth && cumulativeLegendTextWidth > 0) {
-                        ++row;
-                        cumulativeLegendTextWidth = 0;
+            itemEnter
+                .attr('visibility', (d) => d.hidden && !self._hiddenVisibility ? 'hidden' : 'visible')
+                .attr('transform', function(d, i) {
+                    let translateBy;
+                    let hidden = d.hidden && !self._hiddenVisibility;
+                    if (self._horizontal) {
+                        const itemWidth = self._autoItemWidth === true ? this.getBBox().width + self._gap : self._itemWidth;
+                        if ((cumulativeLegendTextWidth + itemWidth) > self._legendWidth && cumulativeLegendTextWidth > 0) {
+                            ++row;
+                            cumulativeLegendTextWidth = 0;
+                        }
+                        translateBy = `translate(${cumulativeLegendTextWidth},${row * legendItemHeight})`;
+                        cumulativeLegendTextWidth += hidden ? 0 : itemWidth;
+                    } else {
+                        translateBy = `translate(0,${n * legendItemHeight})`;
                     }
-                    translateBy = `translate(${cumulativeLegendTextWidth},${hidden ? LEGEND_HIDE_Y : row * legendItemHeight})`;
-                    cumulativeLegendTextWidth += hidden ? 0 : itemWidth;
-                } else {
-                    translateBy = `translate(0,${hidden ? LEGEND_HIDE_Y : n * legendItemHeight})`;
-                }
-                n += hidden ? 0 : 1;
-                return translateBy;
-            });
+                    n += hidden ? 0 : 1;
+                    return translateBy;
+                });
         }
     }
 

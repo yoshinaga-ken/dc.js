@@ -1,0 +1,115 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <title>dc.js - Stacked Bar Example</title>
+    <meta charset="UTF-8">
+    <link rel="stylesheet" type="text/css" href="../css/bootstrap.min.css">
+    <link rel="stylesheet" type="text/css" href="../css/dc.css"/>
+    <style>
+        .dc-chart g.chart-body {
+            clip-path: none;
+        }
+    </style>
+</head>
+<body>
+
+<div class="container">
+    <script type="text/javascript" src="header.js"></script>
+
+    <button id="btn_stack1">Stack Group1</button>
+    <button id="btn_stack2">Stack Group2</button>
+    Legend: 
+    <input type="radio" name="horizontal" id="chk_vertical" checked="true">vertical
+    <input id="chk_horizontal" name="horizontal" type="radio">horizontal
+
+    <div id="test"></div>
+
+    <script type="text/javascript" src="../js/d3.js"></script>
+    <script type="text/javascript" src="../js/crossfilter.js"></script>
+    <script type="text/javascript" src="../js/dc.js"></script>
+    <script type="text/javascript">
+
+        class MyBarChart extends dc.BarChart {
+            legendables () {
+                const items = super.legendables();
+                return items.reverse();
+            }
+        }
+
+        const chart = new MyBarChart('#test');
+
+        d3.csv('morley.csv').then(experiments => {
+
+            experiments.forEach(x => {
+                x.Speed = +x.Speed;
+            });
+
+            const ndx = crossfilter(experiments),
+                runDimension = ndx.dimension(d => +d.Run),
+                speedSumGroup = runDimension.group().reduce((p, v) => {
+                    p[v.Expt] = (p[v.Expt] || 0) + v.Speed;
+                    return p;
+                }, (p, v) => {
+                    p[v.Expt] = (p[v.Expt] || 0) - v.Speed;
+                    return p;
+                }, () => ({}));
+
+            function sel_stack (i) {
+                return d => d.value[i];
+            }
+
+            chart
+                .width(768)
+                .height(480)
+                .x(d3.scaleLinear().domain([1, 21]))
+                .margins({left: 100, top: 40, right: 10, bottom: 20})
+                .brushOn(false)
+                .clipPadding(10)
+                .title(function (d) {
+                    return d.key + '[' + this.layer + ']: ' + d.value[this.layer];
+                })
+                .dimension(runDimension)
+                .group(speedSumGroup, 'Expt-1', sel_stack('1'))
+                .renderLabel(true);
+
+            chart.legend(dc.legend());
+
+            for (var i = 2; i < 6; ++i) {
+                chart.stack(speedSumGroup, 'Expt-' + i, sel_stack(i));
+            }
+
+            chart.render();
+
+            const STK_GRP=[
+                ["Expt-1","Expt-2","Expt-3"],
+                ["Expt-4","Expt-5","Expt-6"]
+            ];
+            function show_stack_group(no){
+                for (var i = 0; i < STK_GRP.length; i++) {
+                    for (var j = 0; j < STK_GRP[i].length; j++) {
+                        if(i===no) chart.showStack(STK_GRP[i][j]);
+                        else chart.hideStack(STK_GRP[i][j]);
+                    }
+                }
+            }
+
+            document.getElementById('btn_stack1').addEventListener('click', function(event) {
+                show_stack_group(0);chart.render();
+            });
+            document.getElementById('btn_stack2').addEventListener('click', function(event) {
+                show_stack_group(1);chart.render();
+            });
+            document.getElementById('chk_horizontal').addEventListener('click', function(event) {
+                chart.legend().horizontal(true).render();
+            });
+            document.getElementById('chk_vertical').addEventListener('click', function(event) {
+                chart.legend().horizontal(false).render();
+            });
+
+        });
+
+    </script>
+
+</div>
+</body>
+</html>
