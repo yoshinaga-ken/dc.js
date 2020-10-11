@@ -94,47 +94,46 @@ describe('dc.legend', () => {
             });
         });
 
-/*
-//TODO:hiddenVisibility(false)のテストコード
 
         describe('with .horizontal(true) and hiddenVisibility(false)', () => {
             beforeEach(() => {
                 chart.legend(new dc.Legend().horizontal(true).hiddenVisibility(false));
+                chart.stack(dateValueSumGroup, 'Fixed2', () => {})
+                chart.stack(dateValueSumGroup, 'Fixed3', () => {})
                 chart.hideStack(chart.stack()[0].name);
+                chart.hideStack(chart.stack()[2].name);
                 chart.render();
-                debugger;
             });
 
             it('should place legend items visibility and vertically', () => {
-                legendItem(0).attr('visibility')==='visible'
-                legendItem(1).attr('visibility')==='hidden';
-                legendItem(2).attr('visibility')==='hidden';
-
-                expect(coordsFromTranslate(legendItem(0).attr('transform')).x).toBeWithinDelta(0, 1);
-                expect(coordsFromTranslate(legendItem(1).attr('transform')).x).toBeWithinDelta(65, 5);
-                expect(coordsFromTranslate(legendItem(2).attr('transform')).x).toBeWithinDelta(155, 15);
+                expect(legendItem(0).attr('visibility')).toBe('hidden');
+                expect(coordsFromTranslate(legendItem(1).attr('transform')).x).toBeWithinDelta(0, 1);
+                expect(legendItem(2).attr('visibility')).toBe('hidden');
+                expect(coordsFromTranslate(legendItem(3).attr('transform')).x).toBeWithinDelta(65, 5);
+                expect(coordsFromTranslate(legendItem(4).attr('transform')).x).toBeWithinDelta(155, 15);
             });
         });
 
-        describe('without .horizontal(true) and hiddenVisibility(false)', () => {
+        describe('without .horizontal(false) and hiddenVisibility(false)', () => {
             beforeEach(() => {
                 chart.legend(new dc.Legend().horizontal(false).hiddenVisibility(false));
+                chart.stack(dateValueSumGroup, 'Fixed2', () => {})
+                chart.stack(dateValueSumGroup, 'Fixed3', () => {})
                 chart.hideStack(chart.stack()[0].name);
+                chart.hideStack(chart.stack()[2].name);
                 chart.render();
-                debugger;
             });
 
             it('should place legend items visibility and horizontally', () => {
-                legendItem(0).attr('visibility')==='visible'
-                legendItem(1).attr('visibility')==='hidden';
-                legendItem(2).attr('visibility')==='hidden';
-                expect(coordsFromTranslate(legendItem(0).attr('transform')).y).toBeWithinDelta(0, 1);
-                expect(coordsFromTranslate(legendItem(1).attr('transform')).y).toBeWithinDelta(65, 5);
-                expect(coordsFromTranslate(legendItem(2).attr('transform')).y).toBeWithinDelta(155, 15);
+                expect(legendItem(0).attr('visibility')).toBe('hidden');
+                expect(coordsFromTranslate(legendItem(1).attr('transform')).y).toBeWithinDelta(0, 1);
+                expect(legendItem(2).attr('visibility')).toBe('hidden');
+                expect(coordsFromTranslate(legendItem(3).attr('transform')).y).toBeWithinDelta(15, 2);
+                expect(coordsFromTranslate(legendItem(4).attr('transform')).y).toBeWithinDelta(32, 4);
             });
 
         });
-*/
+
         describe('with .horizontal(true) and defined legendWidth and itemWidth', () => {
             let legendCoords;
             beforeEach(() => {
